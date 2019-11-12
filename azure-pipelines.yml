@@ -8,16 +8,10 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
   - task: UseDotNet@2
-    displayName: 'Install .NET Core 2.x SDK'
+    displayName: 'Install .NET Core SDK'
     inputs:
       packageType: 'sdk'
-      version: '2.x'
-  - task: UseDotNet@2
-    displayName: 'Install .NET Core 3.x SDK'
-    inputs:
-      packageType: 'sdk'
-      version: '3.0.100-preview9-014004'
-      includePreviewVersions: true
+      useGlobalJson: true
   - task: Bash@3
     displayName: 'Build Script'
     inputs:
@@ -29,26 +23,20 @@ jobs:
     vmImage: 'vs2017-win2016'
   steps:
   - task: UseDotNet@2
-    displayName: 'Install .NET Core 2.x SDK'
-    inputs:
-      packageType: 'sdk'
-      version: '2.x'
-  - task: UseDotNet@2
     displayName: 'Install .NET Core 3.x SDK'
     inputs:
       packageType: 'sdk'
-      version: '3.0.100-preview9-014004'
-      includePreviewVersions: true
+      useGlobalJson: true
   - task: PowerShell@2
     displayName: 'Build Script'
     inputs:
       targetType: filePath
       filePath: ./build.ps1  
   - task: NuGetCommand@2
-    displayName: 'MyGet push'
+    displayName: 'Push to GitHub packages'
     inputs:
       command: push
       packagesToPush: 'nuget/*.nupkg'
       nuGetFeedType: external
-      publishFeedCredentials: 'MyGet'
-      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+      publishFeedCredentials: 'GitHub Packages'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
