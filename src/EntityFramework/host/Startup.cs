@@ -5,9 +5,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Reflection;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Mappers;
+using IdentityServerAspNetIdentity;
 
 namespace Host
 {
@@ -25,26 +29,28 @@ namespace Host
             services.AddControllersWithViews();
 
             var connectionString = _config.GetConnectionString("db");
-
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+            
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
-                .AddTestUsers(TestUsers.Users)
+                .AddTestUsers(Config.GetUsers())
                 // this adds the config data from DB (clients, resources, CORS)
                 .AddConfigurationStore(options =>
                 {
-                    options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString);
+                    options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString, 
+                        sql => sql.MigrationsAssembly(migrationsAssembly));
                 })
                 // this adds the operational data from DB (codes, tokens, consents)
                 .AddOperationalStore(options =>
                 {
-                    options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString);
+                    options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString,
+                        sql => sql.MigrationsAssembly(migrationsAssembly));
 
                     // this enables automatic token cleanup. this is optional.
                     options.EnableTokenCleanup = true;
-                    options.TokenCleanupInterval = 5; // interval in seconds, short for testing
-                });
+                })
                 // this is something you will want in production to reduce load on and requests to the DB
-                //.AddConfigurationStoreCache();
+                .AddConfigurationStoreCache();
         }
 
         public void Configure(IApplicationBuilder app)

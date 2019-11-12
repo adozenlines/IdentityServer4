@@ -4,9 +4,12 @@
 
 using Microsoft.AspNetCore.Hosting;
 using System;
+using Host.Data;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Microsoft.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog.Events;
 
 namespace Host

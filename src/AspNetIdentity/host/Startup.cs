@@ -29,8 +29,11 @@ namespace Host
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            
             services.AddControllersWithViews();
-
+            
+            services.AddOidcStateDataFormatterCache("oidc");
+            
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
                 .AddInMemoryIdentityResources(Host.Configuration.Resources.GetIdentityResources())
@@ -41,6 +44,16 @@ namespace Host
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+                 
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.EnsureDeleted();
+                dbContext.Database.EnsureCreated();
+                dbContext.Database.Migrate();
+                
+            }
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -58,7 +71,7 @@ namespace Host
             app.UseIdentityServer();
 
             app.UseAuthorization();
-
+            app.UseAuthentication();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();

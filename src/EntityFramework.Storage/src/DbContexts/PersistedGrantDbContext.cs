@@ -9,6 +9,7 @@ using IdentityServer4.EntityFramework.Extensions;
 using IdentityServer4.EntityFramework.Interfaces;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Scaffolding;
 
 namespace IdentityServer4.EntityFramework.DbContexts
 {
@@ -52,6 +53,8 @@ namespace IdentityServer4.EntityFramework.DbContexts
         {
             if (storeOptions == null) throw new ArgumentNullException(nameof(storeOptions));
             this.storeOptions = storeOptions;
+  
+            
         }
 
         /// <summary>

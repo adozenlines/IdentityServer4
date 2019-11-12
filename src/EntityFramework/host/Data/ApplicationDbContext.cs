@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using IdentityServerAspNetIdentity.Models;
-using IdentityServer.Models;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace IdentityServerAspNetIdentity.Data
 {
@@ -19,7 +19,8 @@ namespace IdentityServerAspNetIdentity.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
-
-        public DbSet<IdentityServer.Models.TimeOfDayModel> TimeOfDayModel { get; set; }
+    }
+    public class ApplicationUser : IdentityUser
+    {
     }
 }

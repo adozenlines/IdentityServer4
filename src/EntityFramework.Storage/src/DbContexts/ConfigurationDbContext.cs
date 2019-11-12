@@ -51,6 +51,8 @@ namespace IdentityServer4.EntityFramework.DbContexts
             : base(options)
         {
             this.storeOptions = storeOptions ?? throw new ArgumentNullException(nameof(storeOptions));
+      
+
         }
 
         /// <summary>
